@@ -28,7 +28,7 @@ async function main() {
 
     // Fetch demo links in parallel batches of 5
     const rows = ['name,team1,team2,event,demo_link,hltv_id,hltv_link,team1_score,team2_score']
-    const batchSize = 5
+    const batchSize = 3
 
     for (let i = 0; i < limited.length; i += batchSize) {
       const batch = limited.slice(i, i + batchSize)
@@ -57,7 +57,7 @@ async function main() {
 
       // Small delay between batches
       if (i + batchSize < limited.length) {
-        await new Promise(resolve => setTimeout(resolve, 1_000))
+        await new Promise(resolve => setTimeout(resolve, 2_000))
       }
     }
 

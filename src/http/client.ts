@@ -122,8 +122,22 @@ export async function fetchWithCookies(url: string, config: ScraperConfig = {}):
   client.defaults.headers['User-Agent'] = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36'
   client.defaults.headers['Referer'] = 'https://www.hltv.org/'
 
-  const res = await client.get<string>(url)
-  return res.data as string
+  for (let attempt = 1; attempt <= 5; attempt++) {
+    try {
+      const res = await client.get<string>(url)
+      return res.data as string
+    } catch (err: any) {
+      if (err?.response?.status === 429) {
+        const retryAfter = parseInt(err.response.headers['retry-after'] ?? '60')
+        console.warn(`[hltv-scraper] ⏳ Rate limited, waiting ${retryAfter}s... (attempt ${attempt}/5)`)
+        await sleep((retryAfter + 2) * 1000)
+      } else {
+        throw err
+      }
+    }
+  }
+
+  throw new Error(`Failed to fetch ${url} after 5 attempts`)
 }
 export async function fetchWithBrowser(url: string, config: ScraperConfig = {}): Promise<string> {
   const browser = await getBrowser()
