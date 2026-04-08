@@ -1,0 +1,28 @@
+{
+  "name": "hltv-scraper",
+  "version": "1.0.0",
+  "description": "HLTV scraper with Cloudflare bypass - focused on matches and demo links",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "ts-node src/playground.ts",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "cheerio": "^1.0.0",
+    "https-proxy-agent": "^7.0.0",
+    "playwright": "^1.40.0",
+    "playwright-extra": "^4.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "user-agents": "^1.0.1396"
+  },
+  "devDependencies": {
+    "@types/cheerio": "^0.22.35",
+    "@types/node": "^20.0.0",
+    "@types/user-agents": "^1.0.4",
+    "ts-node": "^10.9.0",
+    "typescript": "^5.0.0"
+  }
+}
