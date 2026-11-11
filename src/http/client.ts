@@ -26,7 +26,7 @@ export interface ScraperConfig {
   maxRetries?: number
 
   /**
-   * Use Playwright browser for JS-rendered pages (bypasses CF challenge pages).
+   * Use Playwright browser for JS-rendered pages (slower; use when a page needs JavaScript).
    * Requires: npx playwright install chromium
    */
   useBrowser?: boolean

@@ -1,15 +1,18 @@
 # hltv-scraper
 
-A TypeScript HLTV scraper focused on **fetching matches and demo download links**, with built-in Cloudflare bypass strategies.
+A TypeScript client for reading CS2 match listings, results and demo download links from [HLTV.org](https://www.hltv.org).
+
+> **Disclaimer:** This is an unofficial personal project. It is not affiliated with, endorsed by or connected to HLTV.org. You are responsible for using it in line with HLTV's terms of use. Please keep request volumes low; see [Responsible use](#responsible-use).
 
 ## Features
 
-- 🚀 **Lightweight axios mode** — fast requests with rotating user agents & realistic browser fingerprints
-- 🛡️ **Browser mode** — Playwright-powered headless Chrome that defeats JS challenge pages
-- 🔄 **Auto-retry** with exponential backoff
-- 🌐 **Proxy support** — HTTP, HTTPS, SOCKS5
-- 🎬 **Demo link extraction** — multiple parsing strategies to find `.dem` download URLs
-- 📦 **TypeScript-first** — full type definitions
+- **HTTP mode**: lightweight requests with axios (the default)
+- **Browser mode**: renders pages in headless Chromium with Playwright, for pages that need JavaScript
+- **Built-in rate limiting**: a delay between requests, and it respects `Retry-After`
+- **Retries** with backoff
+- **Proxy support**: HTTP, HTTPS and SOCKS5
+- **Demo link extraction**: finds the `.dem` download links on match pages
+- **TypeScript-first**: full type definitions
 
 ---
 
@@ -55,23 +58,13 @@ const demos = await scraper.getMatchDemos(2374410)
 
 ---
 
-## Cloudflare Bypass Strategies
+## Request modes
 
-HLTV uses Cloudflare. This scraper handles it in two ways:
+### 1. HTTP mode (default)
+Plain HTTP requests with axios. This is fast and light, and enough for most pages.
 
-### 1. Axios mode (default, fast)
-Rotates realistic browser fingerprints (User-Agent, `sec-ch-ua`, accept headers, etc.) and uses `user-agents` for per-request UA rotation. Works most of the time.
-
-**Use a proxy to avoid IP bans:**
-```typescript
-const scraper = new HLTVScraper({
-  proxyUrl: 'http://user:pass@proxy.example.com:8080',
-  // or socks5: 'socks5://proxy.example.com:1080'
-})
-```
-
-### 2. Browser mode (heavier, defeats JS challenges)
-Uses Playwright with stealth patches. Automatically waits for CF challenge pages to pass.
+### 2. Browser mode
+Loads pages in headless Chromium with Playwright. Use it when a page needs JavaScript to render. It's slower and uses more memory.
 
 ```typescript
 const scraper = new HLTVScraper({
@@ -79,7 +72,7 @@ const scraper = new HLTVScraper({
   requestDelay: 3000,
 })
 
-// Must close the browser when done
+// Close the browser when you're done
 await scraper.close()
 ```
 
@@ -203,4 +196,11 @@ node dist/index.js
 ## Notes
 
 - Demo links on HLTV point to `https://www.hltv.org/download/demo/<id>` which redirects to the actual `.dem.rar` file hosted on HLTV's CDN. You can download these directly with any HTTP client.
-- Rate-limit yourself. Using `requestDelay: 2000` or higher and a proxy pool is strongly recommended for bulk scraping.
+
+## Responsible use
+
+- Keep `requestDelay` at 2000 ms or higher, and fetch only what you need.
+- Cache the results instead of fetching the same pages again.
+- If you get a `429` response, the client waits for the time in the `Retry-After` header. Don't work around that.
+- Follow HLTV's terms of use and `robots.txt`. If HLTV asks you to stop, stop.
+- Don't republish HLTV's data or content in bulk.

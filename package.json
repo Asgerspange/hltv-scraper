@@ -1,7 +1,7 @@
 {
   "name": "hltv-scraper",
   "version": "1.0.0",
-  "description": "HLTV scraper with Cloudflare bypass - focused on matches and demo links",
+  "description": "Unofficial TypeScript client for HLTV match listings, results and demo links",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
